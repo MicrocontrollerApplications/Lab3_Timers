@@ -1,0 +1,11 @@
+Lab3_Timers.X/debug/
+Lab3_Timers.X/build/
+Lab3_Timers.X/dist/
+Lab3_Timers.X/nbproject/*
+!Lab3_Timers.X/nbproject/configurations.xml
+!Lab3_Timers.X/nbproject/project.xml
+
+/Lab3_Timers.X/build/
+/Lab3_Timers.X/dist/
+
+*.log*
