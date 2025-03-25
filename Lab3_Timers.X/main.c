@@ -7,18 +7,19 @@
 
 
 #include <xc.h>
-//#include "Libraries/LCD/GLCD_library.h"
+#include "LCD/GLCD_library.h"
 //
-//#include "GLCD_config.h"
-//#include "utils.h"
+#include "GLCD_config.h"
 
 // function prototype. Used to publish the functions name. It can then
 // be implement elsewhere. In case of this function it is implemented 
 // below main(), to increase readability.
 void __init(void);
-void update_display(unsigned int time);
+void update_time(unsigned int time);
+void update_bar(void);
 
 // main code, i.e. the application itself
+
 void main(void) {
     // Execute initialization of Microcontroller (will be explained soon!)
     __init();
@@ -36,14 +37,27 @@ void main(void) {
         if (T0CONbits.TMR0ON == 0) {
             // delay for ?? ms
             Nop();
-            for (unsigned int i = 0; i < 2604; ++i) {
+            // __debug_break();
+            for (unsigned int i = 0; i < 5208; ++i) {
                 Nop();
             }
+            Nop();
+            // __debug_break();
 
-            time += 1;
+            ++time;
         }
         
-        update_display(time);
+        if(T0CONbits.TMR0ON == 1 && INTCONbits.TMR0IF) {
+            INTCONbits.TMR0IF = 0;
+            ++time;
+        }
+
+        update_time(time);
+
+        if (PORTBbits.RB1 == 0) {
+            while (PORTBbits.RB1 == 0);
+            update_bar();
+        }
 
     }
 
@@ -53,38 +67,50 @@ void main(void) {
 // Ignore below code for now. We'll come to initialization soon.
 
 void __init(void) {
-    // Set Oscillator Frequency to 4MHz (you will use this setting a lot!)
-    OSCCON = 0x00;
+    // Set Oscillator Frequency to 250KHz (you will use this setting a lot!)
+    OSCCON = 0x20;
     // Enable LCD
-//    GLCD_Init();
+    GLCD_Init();
 
     ANSELB = 0; // which mode are the pins configured for?
     TRISB = 0b11000011; // how are pins configured here?
     LATB = 0b00111100; // are the LEDs on or off?    
 
-    T0CONbits.TMR0ON = 0;
-    T0CONbits.T08BIT = 1;
+    T0CONbits.TMR0ON = 1;
+    T0CONbits.T08BIT = 0;
     T0CONbits.T0CS = 0;
-    T0CONbits.PSA = 0;
-    T0CONbits.T0PS = 0b110;
+    T0CONbits.PSA = 1;
 }
 
-void update_display(unsigned int time) {
+void update_time(unsigned int time) {
     static unsigned int previous_time = 0;
-
+    time *= 5;
     if (time != previous_time) {
-        // print new time to Display
+        previous_time = time;
+        unsigned int minutes = (unsigned int) (time / 600);
+        unsigned int no_mins = (unsigned int) (time - minutes * 600);
+        unsigned int seconds = (unsigned int) (no_mins / 10);
+        unsigned char ms = no_mins - seconds * 10;
+        GLCD_Text2Out(0, 4, ":  . ");
+        GLCD_Value2Out_00(0, 2, minutes, 2);
+        GLCD_Value2Out_00(0, 5, seconds, 2);
+        GLCD_Value2Out_00(0, 8, ms, 1);
     }
+}
 
-    if (T0CONbits.TMR0ON) {
-        // update "Laufbalken"
-        static unsigned int delay = 0;
-        if (++delay < 100000) { // for F_osc = 4MHz ~ 100ms
-            return;
-        }
+void update_bar(void) {
+    static unsigned char bar[11] = {};
+    static char num_chars_in_bar = 0;
+    // update "Laufbalken"
+    bar[num_chars_in_bar] = '#';
+    bar[num_chars_in_bar + 1] = '\0';
+    // update bar
+    GLCD_Text2Out(2, 0, bar);
 
-        // update Laufbalken
-
+    ++num_chars_in_bar;
+    if (num_chars_in_bar >= 11) {
+        num_chars_in_bar = 0;
+        bar[0] = '\0';
+        GLCD_Clear2Row(2);
     }
-
 }
