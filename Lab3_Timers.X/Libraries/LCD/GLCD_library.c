@@ -45,7 +45,7 @@ union v8bit spiData;
 //##############################################################################
 void GLCD_Write(unsigned char data, unsigned char dc)
 {
-    spiData.all = data; // Zuweisung des übergebenen Bytes data in spiData, um dann über spiData.bitx auf einzelbe Bits zugreifen zu können
+    spiData.all = data; // Zuweisung des Ã¼bergebenen Bytes data in spiData, um dann Ã¼ber spiData.bitx auf einzelbe Bits zugreifen zu kÃ¶nnen
 
     GLCD_DC = dc;
     GLCD_nCS = 0;

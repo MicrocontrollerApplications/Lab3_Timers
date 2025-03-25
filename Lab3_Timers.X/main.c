@@ -64,6 +64,7 @@ void main(void) {
     return;
 }
 
+
 void __init(void) {
     // Set Oscillator Frequency to ??kHz (you will use this setting a lot!)
     OSCCON = 0x20;
