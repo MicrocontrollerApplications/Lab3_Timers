@@ -70,7 +70,7 @@ void GLCD_Init(void)
     GLCD_nRES = 1;
     
     GLCD_Write(DSPL_FKT | FKT_EXT, CMD);     // Extended instructions enabled
-    GLCD_Write(DSPL_VOP | 0x40, CMD);        // Set contrast 0 - 127
+    GLCD_Write(DSPL_VOP | 0x44, CMD);        // Set contrast 0 - 127
     GLCD_Write(DSPL_TEMP | 0x02, CMD);       // Temperature control
     GLCD_Write(DSPL_BIAS | 0x02, CMD);       // Set bias system
     GLCD_Write(DSPL_FKT | FKT_ON | FKT_HORZ | FKT_BASC, CMD);
