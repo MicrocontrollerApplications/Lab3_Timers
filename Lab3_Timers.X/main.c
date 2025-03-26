@@ -19,12 +19,15 @@ void update_time(unsigned int time);
 void update_bar(void);
 
 // main code, i.e. the application itself
-
 void main(void) {
     // Execute initialization of Microcontroller (will be explained soon!)
     __init();
 
-    unsigned int time = 0; // up to 65535 seconds = 18.2 hours can be stored
+    /* up to 6553.5 seconds = 1.82 hours can be stored
+     * using 1ms steps instead of 100ms steps would decrease the storable time
+     * to approx. 1 minute ;)
+     */
+    unsigned int time_100ms = 0; 
     unsigned char led_counter = 0;
 
     // while(1) is an endless loop. It's a very common part of microcontroller
@@ -34,29 +37,26 @@ void main(void) {
     while (1) {
 
         // only use for loop to waste time, if Timer is not enabled
+        // Timer0 can be enabled in line 83
         if (T0CONbits.TMR0ON == 0) {
             // delay for ?? ms
-            Nop();
-            // __debug_break();
             for (unsigned int i = 0; i < 5208; ++i) {
                 Nop();
             }
-            Nop();
-            // __debug_break();
-
-            ++time;
+            
+            time_100ms += 5;
         }
         
         if(T0CONbits.TMR0ON == 1 && INTCONbits.TMR0IF) {
             INTCONbits.TMR0IF = 0;
-            ++time;
+            time_100ms += 5;
         }
 
-        update_time(time);
+        update_time(time_100ms);
 
         if (PORTBbits.RB1 == 0) {
-            while (PORTBbits.RB1 == 0);
             update_bar();
+            while (PORTBbits.RB1 == 0);
         }
 
     }
@@ -64,13 +64,13 @@ void main(void) {
     return;
 }
 
-// Ignore below code for now. We'll come to initialization soon.
-
 void __init(void) {
-    // Set Oscillator Frequency to 250KHz (you will use this setting a lot!)
+    // Set Oscillator Frequency to 500KHz (you will use this setting a lot!)
     OSCCON = 0x20;
     // Enable LCD
     GLCD_Init();
+    // set initial string for Display
+    GLCD_Text2Out(0, 2, "00:00.0");
 
     ANSELB = 0; // which mode are the pins configured for?
     TRISB = 0b11000011; // how are pins configured here?
@@ -84,33 +84,29 @@ void __init(void) {
 
 void update_time(unsigned int time) {
     static unsigned int previous_time = 0;
-    time *= 5;
+    
     if (time != previous_time) {
         previous_time = time;
         unsigned int minutes = (unsigned int) (time / 600);
+        GLCD_Value2Out_00(0, 2, minutes, 2);
+        
         unsigned int no_mins = (unsigned int) (time - minutes * 600);
         unsigned int seconds = (unsigned int) (no_mins / 10);
-        unsigned char ms = no_mins - seconds * 10;
-        GLCD_Text2Out(0, 4, ":  . ");
-        GLCD_Value2Out_00(0, 2, minutes, 2);
         GLCD_Value2Out_00(0, 5, seconds, 2);
+        
+        unsigned char ms = no_mins - seconds * 10;
         GLCD_Value2Out_00(0, 8, ms, 1);
     }
 }
 
+char num_chars_in_bar = 0;
 void update_bar(void) {
-    static unsigned char bar[11] = {};
-    static char num_chars_in_bar = 0;
-    // update "Laufbalken"
-    bar[num_chars_in_bar] = '#';
-    bar[num_chars_in_bar + 1] = '\0';
     // update bar
-    GLCD_Text2Out(2, 0, bar);
-
+    GLCD_Text2Out(2, num_chars_in_bar, '#');
+    
     ++num_chars_in_bar;
     if (num_chars_in_bar >= 11) {
         num_chars_in_bar = 0;
-        bar[0] = '\0';
         GLCD_Clear2Row(2);
     }
 }
