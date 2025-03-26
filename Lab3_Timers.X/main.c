@@ -15,8 +15,8 @@
 // be implement elsewhere. In case of this function it is implemented 
 // below main(), to increase readability.
 void __init(void);
-void update_time(unsigned int time);
-void update_bar(void);
+void update_time_on_display(unsigned int time);
+void update_bar_on_display(void);
 
 // main code, i.e. the application itself
 void main(void) {
@@ -39,23 +39,23 @@ void main(void) {
         // only use for loop to waste time, if Timer is not enabled
         // Timer0 can be enabled in line 83
         if (T0CONbits.TMR0ON == 0) {
-            // delay for ?? ms
-            for (unsigned int i = 0; i < 5208; ++i) {
+            // delay for ?? ms (check OSCCON's value in __init first!)
+            for (unsigned int i = 0; i < 1042; ++i) {
                 Nop();
             }
             
-            time_100ms += 5;
+            time_100ms += 1;
         }
         
         if(T0CONbits.TMR0ON == 1 && INTCONbits.TMR0IF) {
             INTCONbits.TMR0IF = 0;
-            time_100ms += 5;
+            time_100ms += 1;
         }
 
-        update_time(time_100ms);
+        update_time_on_display(time_100ms);
 
         if (PORTBbits.RB1 == 0) {
-            update_bar();
+            update_bar_on_display();
             while (PORTBbits.RB1 == 0);
         }
 
@@ -65,24 +65,28 @@ void main(void) {
 }
 
 void __init(void) {
-    // Set Oscillator Frequency to 500KHz (you will use this setting a lot!)
+    // Set Oscillator Frequency to ??kHz (you will use this setting a lot!)
     OSCCON = 0x20;
     // Enable LCD
     GLCD_Init();
     // set initial string for Display
-    GLCD_Text2Out(0, 2, "00:00.0");
+    GLCD_Text2Out(0, 2, "00:00.0");   
+    
+    ANSELB = 0;
+    LATB = 0;
+    TRISB = 0b00000010;
 
-    ANSELB = 0; // which mode are the pins configured for?
-    TRISB = 0b11000011; // how are pins configured here?
-    LATB = 0b00111100; // are the LEDs on or off?    
-
-    T0CONbits.TMR0ON = 1;
-    T0CONbits.T08BIT = 0;
+    T0CONbits.T08BIT = 1;
     T0CONbits.T0CS = 0;
-    T0CONbits.PSA = 1;
+    T0CONbits.PSA = 0;
+    T0CONbits.T0PS = 0b101;
+    INTCONbits.TMR0IF = 0; // reset overflow flag to avoid false initial notification
+    TMR0H = 0;
+    TMR0L = 0;
+    T0CONbits.TMR0ON = 0;
 }
 
-void update_time(unsigned int time) {
+void update_time_on_display(unsigned int time) {
     static unsigned int previous_time = 0;
     
     if (time != previous_time) {
@@ -100,9 +104,9 @@ void update_time(unsigned int time) {
 }
 
 char num_chars_in_bar = 0;
-void update_bar(void) {
+void update_bar_on_display(void) {
     // update bar
-    GLCD_Text2Out(2, num_chars_in_bar, '#');
+    GLCD_Text2Out(2, num_chars_in_bar, "#");
     
     ++num_chars_in_bar;
     if (num_chars_in_bar >= 11) {
