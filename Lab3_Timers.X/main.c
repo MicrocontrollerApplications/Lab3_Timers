@@ -38,26 +38,35 @@ void main(void) {
 
         // only use for loop to waste time, if Timer is not enabled
         // Timer0 can be enabled in line 83
-        if (T0CONbits.TMR0ON == 0) {
-            // delay for ?? ms
-            for (unsigned int i = 0; i < 5208; ++i) {
+//        if (T0CONbits.TMR0ON == 0 && T1CONbits.TMR1ON == 0) {
+//            /*// delay for 500 ms
+//            for (unsigned int i = 0; i < 5208; ++i) {
+//            */
+            for (unsigned int i = 0; i < 1041; ++i) {
                 Nop();
             }
-            
-            time_100ms += 5;
+            LATBbits.LATB3 ^= 1;
+//            
+//            time_100ms += 1; //5;
+//        }
+//        
+//        if(T0CONbits.TMR0ON == 1 && INTCONbits.TMR0IF) {
+//            INTCONbits.TMR0IF = 0;
+//            time_100ms += 5;
+//        }
+
+        if(PIR1bits.CCP1IF == 1){
+            PIR1bits.CCP1IF = 0;
+            // time_100ms += 1;
+            LATBbits.LATB2 ^= 1;
         }
         
-        if(T0CONbits.TMR0ON == 1 && INTCONbits.TMR0IF) {
-            INTCONbits.TMR0IF = 0;
-            time_100ms += 5;
-        }
+        // update_time(time_100ms);
 
-        update_time(time_100ms);
-
-        if (PORTBbits.RB1 == 0) {
-            update_bar();
-            while (PORTBbits.RB1 == 0);
-        }
+//        if (PORTBbits.RB1 == 0) {
+//            update_bar();
+//            while (PORTBbits.RB1 == 0);
+//        }
 
     }
 
@@ -76,10 +85,23 @@ void __init(void) {
     TRISB = 0b11000011; // how are pins configured here?
     LATB = 0b00111100; // are the LEDs on or off?    
 
-    T0CONbits.TMR0ON = 1;
     T0CONbits.T08BIT = 0;
     T0CONbits.T0CS = 0;
     T0CONbits.PSA = 1;
+    T0CONbits.TMR0ON = 0;
+    
+    T1CONbits.TMR1CS = 0b00; // Fosc/4
+    T1CONbits.T1CKPS = 0b00; // PS = 1
+    T1CONbits.T1RD16 = 1; // enable 16 bit read/write mode
+    T1CONbits.T1SYNC = 1;
+    T1CONbits.TMR1ON = 1;
+    
+    CCP1CONbits.CCP1M = 0b1010; // set CCP-Module to compare mode
+    CCPTMRS0bits.C1TSEL = 0b00; // Use Timer1 for comparison
+//    CCPR1H = 0x30; // comparison value for CCP and TMR1
+//    CCPR1L = 0xD4;
+    CCPR1 = 12500;
+    PIR1bits.CCP1IF = 0;
 }
 
 void update_time(unsigned int time) {
@@ -102,7 +124,7 @@ void update_time(unsigned int time) {
 char num_chars_in_bar = 0;
 void update_bar(void) {
     // update bar
-    GLCD_Text2Out(2, num_chars_in_bar, '#');
+    GLCD_Text2Out(2, num_chars_in_bar, "#");
     
     ++num_chars_in_bar;
     if (num_chars_in_bar >= 11) {
