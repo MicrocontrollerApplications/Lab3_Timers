@@ -72,20 +72,31 @@ We will now check the timing of our two approaches as well as the overall timing
 First, we will check the approach using a timer.
 > [!CAUTION]
 > As the missing external input led to problems in the past we will comment the part of the code checking the middle-button's state. Thus, please comment lines 57 to 60.
+> ![](doc/comm_57_60.png)
 
 > [!IMPORTANT]
 > Before checking the timing via the stopwatch, calculate the expected time first!
 
 To check the timing of the timer we will disable the display output by commenting line 55 and set a breakpoint in line 52.
+![](doc/BP52_nD.png)
+
 Now we can open the stopwatch (Window -> Debugging -> Stopwatch) and start Debugging.
 
 If the Debugger stops at line 55 for the first time, open the stopwatch tab and click continue (or press F5). How long did it take to get to the breakpoint again? Is it the time you expected?
 
 Now that we know how our timer performs without updating the display we will check how much time it needs with the additional update of the display. Thus, stop the debugging session, uncomment line 55 and repeat the previous procedure.
+![](doc/BP52.png)
+
 Did you spot any difference? If so, try to find the reason for it.
 
-Let's see if the time wasting for-loop behaves the same way as the timer. Disable the timer (line 82) and set a breakpoint to line 43 and 47. Start debugging and remove the breakpoint in line 43 if it's reached for the first time. Now open the stopwatch tab again and continue code execution. Does the time of the for loop differ from the timer's one? If so, can you explain why?
-Now, remove the breakpoint in line 47 and add a breakpoint in line 55. Continue code execution and wait for the new breakpoint to be reached. Afterwards, continue code execution again to stop the time needed for a complete cycle of updating the display and waiting the required 100ms. Can you see a difference to the approach using a timer? If so, what's the reason for it?
+Let's see if the time wasting for-loop behaves the same way as the timer. Disable the timer (line 82) and set a breakpoint to line 43 and 47. 
+![](doc/BP43_47.png)
+
+Start debugging and remove the breakpoint in line 43 if it's reached for the first time. Now open the stopwatch tab again and continue code execution. Does the time of the for loop differ from the timer's one? If so, can you explain why?
+Now, remove the breakpoint in line 47 and add a breakpoint in line 55. 
+![](doc/BP43_55.png)
+
+Continue code execution and wait for the new breakpoint to be reached. Afterwards, continue code execution again to stop the time needed for a complete cycle of updating the display and waiting the required 100ms. Can you see a difference to the approach using a timer? If so, what's the reason for it?
 
 ## Excercise 2 - Improve Timer usage
 Now as we know the differences between using timers and time wasting for-loops we should remove the disadvantage that the timer needs to overflow and thus does not offer the ability to finetune its timing. Therefore, we will use the Capture Compare Module of our Microcontroller.
@@ -120,10 +131,13 @@ Now click on the debug-button and check if your code is working as expected. If 
 
 ### Question 2.2 - Ensure timing works as expected
 Now that we're using Timer1 and the Capture Compare Module, we should check if the timing was improved compared to the approach using Timer0.
-Therefore, we go back to the Simulator (change configuration accordingly, and comment the lines 65 to 68). 
+Therefore, we go back to the Simulator (change configuration accordingly, and comment the lines checking the middle button's state).
+![](doc/no_mb.png)
+
 To check the new approach we will repeat the procedure of [Question 1.3](#question-1-3).
-1. disable the display output (comment line 63).
-2. set a breakpoint on line 60 (or whereever you increase variable time_100ms after checking PIR1bits.CCP1IF).
+1. disable the display output (comment line 63). 
+![](doc/no_display.png)
+2. set a breakpoint whereever you increase the variable *time_100ms* after checking PIR1bits.CCP1IF.
 3. check the time between two consecutive stops at that line. Is it more accurate than before?
 4. last but not least enable the display output again and repeat the previous check. Is everything working correctly?
 
