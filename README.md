@@ -33,9 +33,9 @@ The relevant chapters for today's laboratory are
 - 14.0 CAPTURE/COMPARE/PWM MODULES
 
 > [!TIP]
-> We will use the datasheet in every laboratory session from now on. Thus, it's a good idea to either bookmark the datasheet in your browser or to download id to you machine.
+> We will use the datasheet in every laboratory session from now on. Thus, it's a good idea to either bookmark the datasheet in your browser or to download it to you machine.
 > Furthermore, you should get used to the datasheet as you will need it to get the relevant information and for the final **exam**! Thus, it's better to not take any shortcuts and really read the datasheet. ;)
-> Nevertheless, you can of course the search functionality within the datasheet. Within the exam you will get a thinned out version of the datasheet with all relevant modules. So you don't need to extensively train searching the (printed) datasheet, but it's beneficial to be used to the module's descriptions.
+> Nevertheless, you can of course use the search functionality within the datasheet. Within the exam you will get a thinned out version of the datasheet with all relevant modules. So you don't need to extensively train searching the (printed) datasheet, but it's beneficial to be used to the module's descriptions.
 
 ## Excercise 1 - Code analysis
 ### Question 1.1
@@ -67,16 +67,17 @@ T0CONbits.TMR0ON = 1;
 After enabling Timer0 start your program again by clicking the Debug-Button and press the middle-button again if the clock starts to run on the display. Use different frequencies for pressing the button again. Can you observe a different behaviour to the one before?
 
 ### Question 1.3
-Now that we know the specialities of the current implementation it's time to check where they come from. Thereofe, we change the configuration from PicKIT3 to Simulator.
+Now that we know the specialities of the current implementation it's time to check where they come from. Therefore, we change the configuration from PicKIT3 to Simulator.
 We will now check the timing of our two approaches as well as the overall timing, to ensure everything is timed as expected.
 First, we will check the approach using a timer.
 > [!CAUTION]
-> As the missing external input lead to problems in the past we will comment the part of the code checking the middle-button's state. Thus, please comment lines 57 to 60.
+> As the missing external input led to problems in the past we will comment the part of the code checking the middle-button's state. Thus, please comment lines 57 to 60.
+
+> [!IMPORTANT]
+> Before checking the timing via the stopwatch, calculate the expected time first!
 
 To check the timing of the timer we will disable the display output by commenting line 55 and set a breakpoint in line 52.
 Now we can open the stopwatch (Window -> Debugging -> Stopwatch) and start Debugging.
-> [!IMPORTANT]
-> Before checking the timing via the stopwatch, calculate the expected time first!
 
 If the Debugger stops at line 55 for the first time, open the stopwatch tab and click continue (or press F5). How long did it take to get to the breakpoint again? Is it the time you expected?
 
@@ -84,14 +85,14 @@ Now that we know how our timer performs without updating the display we will che
 Did you spot any difference? If so, try to find the reason for it.
 
 Let's see if the time wasting for-loop behaves the same way as the timer. Disable the timer (line 82) and set a breakpoint to line 43 and 47. Start debugging and remove the breakpoint in line 43 if it's reached for the first time. Now open the stopwatch tab again and continue code execution. Does the time of the for loop differ from the timer's one? If so, can you explain why?
-Now, remove the breakpoint in line 47 and add a breakpoint in line 55. Continue code execution and wait for the new breakpoint to be reached. Afterwards, continue code execution again to stop the time needed for a complete cycle of updating the display and waiting the required 500ms. Can you see a difference to the approach using a timer? If so, what's the reason for it?
+Now, remove the breakpoint in line 47 and add a breakpoint in line 55. Continue code execution and wait for the new breakpoint to be reached. Afterwards, continue code execution again to stop the time needed for a complete cycle of updating the display and waiting the required 100ms. Can you see a difference to the approach using a timer? If so, what's the reason for it?
 
 ## Excercise 2 - Improve Timer usage
 Now as we know the differences between using timers and time wasting for-loops we should remove the disadvantage that the timer needs to overflow and thus does not offer the ability to finetune its timing. Therefore, we will use the Capture Compare Module of our Microcontroller.
 But first, let's get rid of the time wasting for-loop (you should already have learned that they have huge disadvantages ;) ). You can either delete it from the source code or comment the relevant lines.
 ### Question 2.1
 As Timer 0 sadly cannot be used with the Capture Compare Module we need to configure Timer1. Therefore, add the relevant configuration to the __init() function below Timer0's configuration. You can use the configuration of Timer0 as an orientation, but keep in mind that Timer1 uses 16 bit by default.
-Check the datasheet to implement below listed configuration. Your configuration needs to enable Timer1 to run for **at least** 500ms, it's also sufficient if it could run longer before an overflow.
+Check the datasheet to implement below listed configuration. Your configuration needs to enable Timer1 to run for **at least** 100ms, it's also sufficient if it could run longer before an overflow.
 1. Clock selection shall be set to $\frac{F_{osc}}{4}$.
 2. TMR1L and TMR1H shall be set to 0. **Keep in mind that the order of writing those two registers matters!**
 3. Prescaler needs to be chosen by you. Check the prescaler values 1, 2, 4, and 8 for their usability. Maybe more than one can be used?
