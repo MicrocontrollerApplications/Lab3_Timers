@@ -110,6 +110,13 @@ Check the datasheet to implement below listed configuration. Your configuration 
 4. Enable Timer 1.
 
 After you configured Timer1, the Capture Compare Module needs to be configured, too.
+Before checking its description in the manual, please check [uC Quick](https://fs.hs-ulm.de/org/Institute/IMM/INFO/LIB/uC_LIB/uC_Quick/uCquick-X.pdf)'s short summation of this module, which can be found in chapter  *1.2.6.4 Capture/Compare/PWM Modul (CCP)*. 
+> [!NOTE]
+> The summation is written german. As an english version does not exist, please use Google Translator, Deepl.org, ChatGPT or another translation tool of you choice to translate the text into your preferede language.
+
+> [!TIP]
+> In case your browser / PDF reader does not provide you a table of content for the document use *STRG + F* to find the chapter.
+
 Open the documentation of the Capture Compare Module and implement below configuration for CCP1.
 1. Set the Mode Selection to *Compare Mode: Special Event Trigger*. (CCPxCON -> CCPxM)
 2. Select Timer1 for comparison. (CCPTMRS0 -> C1TSEL)
