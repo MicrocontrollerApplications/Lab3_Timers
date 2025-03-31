@@ -93,7 +93,7 @@ Let's see if the time wasting for-loop behaves the same way as the timer. Disabl
 ![](doc/BP43_47.png)
 
 Start debugging and remove the breakpoint in line 43 if it's reached for the first time. Now open the stopwatch tab again and continue code execution. Does the time of the for loop differ from the timer's one? If so, can you explain why?
-Now, remove the breakpoint in line 47 and add a breakpoint in line 55. 
+Now, remove the breakpoint in line 47 and add a breakpoint in line 55.<br>
 ![](doc/BP43_55.png)
 
 Continue code execution and wait for the new breakpoint to be reached. Afterwards, continue code execution again to stop the time needed for a complete cycle of updating the display and waiting the required 100ms. Can you see a difference to the approach using a timer? If so, what's the reason for it?
