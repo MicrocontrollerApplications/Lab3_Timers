@@ -110,7 +110,7 @@ Check the datasheet to implement below listed configuration. Your configuration 
 4. Enable Timer 1.
 
 After you configured Timer1, the Capture Compare Module needs to be configured, too.
-Before checking its description in the manual, please check [uC Quick](https://fs.hs-ulm.de/org/Institute/IMM/INFO/LIB/uC_LIB/uC_Quick/uCquick-X.pdf)'s short summation of this module, which can be found in chapter  *1.2.6.4 Capture/Compare/PWM Modul (CCP)*. 
+Before you read the description in the datasheet, please take a look at the summary of the module that Volker Schilling-Kästle has recorded in his detailed [uC Quick](https://fs.hs-ulm.de/org/Institute/IMM/INFO/LIB/uC_LIB/uC_Quick/uCquick-X.pdf). Look for chapter  *1.2.6.4 Capture/Compare/PWM Modul (CCP)*. 
 > [!NOTE]
 > The summation is written german. As an english version does not exist, please use Google Translator, Deepl.org, ChatGPT or another translation tool of you choice to translate the text into your preferede language.
 
