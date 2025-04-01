@@ -77,23 +77,23 @@ First, we will check the approach using a timer.
 > [!IMPORTANT]
 > Before checking the timing via the stopwatch, calculate the expected time first!
 
-To check the timing of the timer we will disable the display output by commenting line 55 and set a breakpoint in line 52.
+To check the timing of the timer we will disable the display output by commenting line 55 and set a breakpoint in line 52.<br>
 ![](doc/BP52_nD.png)
 
 Now we can open the stopwatch (Window -> Debugging -> Stopwatch) and start Debugging.
 
 If the Debugger stops at line 55 for the first time, open the stopwatch tab and click continue (or press F5). How long did it take to get to the breakpoint again? Is it the time you expected?
 
-Now that we know how our timer performs without updating the display we will check how much time it needs with the additional update of the display. Thus, stop the debugging session, uncomment line 55 and repeat the previous procedure.
+Now that we know how our timer performs without updating the display we will check how much time it needs with the additional update of the display. Thus, stop the debugging session, uncomment line 55 and repeat the previous procedure.<br>
 ![](doc/BP52.png)
 
 Did you spot any difference? If so, try to find the reason for it.
 
-Let's see if the time wasting for-loop behaves the same way as the timer. Disable the timer (line 82) and set a breakpoint to line 43 and 47. 
+Let's see if the time wasting for-loop behaves the same way as the timer. Disable the timer (line 82) and set a breakpoint to line 43 and 47.<br>
 ![](doc/BP43_47.png)
 
 Start debugging and remove the breakpoint in line 43 if it's reached for the first time. Now open the stopwatch tab again and continue code execution. Does the time of the for loop differ from the timer's one? If so, can you explain why?
-Now, remove the breakpoint in line 47 and add a breakpoint in line 55. 
+Now, remove the breakpoint in line 47 and add a breakpoint in line 55.<br>
 ![](doc/BP43_55.png)
 
 Continue code execution and wait for the new breakpoint to be reached. Afterwards, continue code execution again to stop the time needed for a complete cycle of updating the display and waiting the required 100ms. Can you see a difference to the approach using a timer? If so, what's the reason for it?
